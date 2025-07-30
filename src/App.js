@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Navbar from './components/common/Navbar';
+import Login from './components/auth/Login'
+import Register from './components/auth/Register'
+import Dashboard from './components/Dashboard';
+import AddReminder from './components/AddReminder'
+import EditReminder from './components/EditReminder'
 
-function App() {
+const App = () => {
+  const token = useSelector((state) => state.auth.token);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={token ? <Dashboard /> : <Navigate to="/login" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/add" element={token ? <AddReminder /> : <Navigate to="/login" />} />
+        <Route path="/edit/:id" element={token ? <EditReminder /> : <Navigate to="/login" />} />
+      </Routes>
+    </>
   );
-}
+};
 
 export default App;
