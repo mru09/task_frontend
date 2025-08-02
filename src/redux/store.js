@@ -5,7 +5,7 @@ import reminderReducer from './slices/reminderSlice';
 const store = configureStore({
   reducer: {
     auth: authReducer,
-    reminder: reminderReducer
+    reminders: reminderReducer
   },
 });
 

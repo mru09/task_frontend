@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API = process.env.REACT_APP_API_URL;
+const API = process.env.REACT_APP_API_URL ;
 
 export default function Register() {
   const [role, setRole] = useState('user');

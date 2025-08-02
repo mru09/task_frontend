@@ -1,119 +1,41 @@
+// src/components/Navbar.jsx
 import React from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Box,
-  Stack,
-} from '@mui/material';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
 
-export default function Navbar() {
-  const navigate = useNavigate();
+const Navbar = () => {
+  const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
-
-  const { isAuthenticated, role, name } = useSelector((state) => state.auth);
-
-  const linkStyle = {
-    textDecoration: 'none',
-  };
-
-  const getButtonStyle = ({ isActive }) => ({
-    color: isActive ? '#0d47a1' : '#fff',
-    backgroundColor: isActive ? '#bbdefb' : 'transparent',
-    fontWeight: isActive ? 'bold' : 500,
-    borderRadius: 4,
-    textTransform: 'none',
-    padding: '6px 12px',
-    minWidth: 'auto',
-  });
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
   };
 
-  const renderTabs = () => {
-    if (!isAuthenticated) {
-      return (
-        <Stack direction="row" spacing={2}>
-          <NavLink to="/login" style={linkStyle}>
-            {({ isActive }) => (
-              <Button sx={getButtonStyle({ isActive })}>Login</Button>
-            )}
-          </NavLink>
-          <NavLink to="/register" style={linkStyle}>
-            {({ isActive }) => (
-              <Button sx={getButtonStyle({ isActive })}>Register</Button>
-            )}
-          </NavLink>
-        </Stack>
-      );
-    }
-
-    if (role === 'seller') {
-      return (
-        <Stack direction="row" spacing={1}>
-          <NavLink to="/seller/products" style={linkStyle}>
-            {({ isActive }) => (
-              <Button sx={getButtonStyle({ isActive })}>Products</Button>
-            )}
-          </NavLink>
-          <NavLink to="/seller/bundles" style={linkStyle}>
-            {({ isActive }) => (
-              <Button sx={getButtonStyle({ isActive })}>Bundles</Button>
-            )}
-          </NavLink>
-          <Button onClick={handleLogout} sx={{ color: 'white' }}>
-            Logout
-          </Button>
-        </Stack>
-      );
-    }
-
-    if (role === 'user') {
-      return (
-        <Stack direction="row" spacing={1}>
-          <NavLink to="/user/products" style={linkStyle}>
-            {({ isActive }) => (
-              <Button sx={getButtonStyle({ isActive })}>Products</Button>
-            )}
-          </NavLink>
-          <NavLink to="/user/bundles" style={linkStyle}>
-            {({ isActive }) => (
-              <Button sx={getButtonStyle({ isActive })}>Bundles</Button>
-            )}
-          </NavLink>
-          <NavLink to="/cart" style={linkStyle}>
-            {({ isActive }) => (
-              <Button sx={getButtonStyle({ isActive })}>Cart</Button>
-            )}
-          </NavLink>
-          <Button onClick={handleLogout} sx={{ color: 'white' }}>
-            Logout
-          </Button>
-        </Stack>
-      );
-    }
-
-    return null;
-  };
-
   return (
-    <AppBar position="static" color="primary" elevation={2}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography
-          variant="h6"
-          onClick={() => navigate('/')}
-          sx={{ cursor: 'pointer', fontWeight: 'bold' }}
-        >
-          Hi! {name}
+    <AppBar position="static">
+      <Toolbar>
+        <Typography variant="h6" component={Link} to="/" sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}>
+          Online Reminder
         </Typography>
-        {renderTabs()}
+
+        {token ? (
+          <Box>
+            <Button color="inherit" component={Link} to="/add">Add</Button>
+            <Button color="inherit" onClick={handleLogout}>Logout</Button>
+          </Box>
+        ) : (
+          <Box>
+            <Button color="inherit" component={Link} to="/login">Login</Button>
+            <Button color="inherit" component={Link} to="/register">Register</Button>
+          </Box>
+        )}
       </Toolbar>
     </AppBar>
   );
-}
+};
+
+export default Navbar;

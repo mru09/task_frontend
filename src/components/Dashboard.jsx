@@ -1,51 +1,51 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchReminders, deleteReminder } from '../redux/slices/reminderSlice';
-import { logout } from '../redux/slices/authSlice';
-import { useNavigate, Link } from 'react-router-dom';
 import {
-  Container,
-  Typography,
-  Button,
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton
+  fetchReminders,
+  deleteReminder,
+  clearStatus,
+} from '../redux/slices/reminderSlice';
+import {
+  Container, Typography, Button, Box, List, ListItem, ListItemText,
+  IconButton, CircularProgress, Alert, Snackbar, Pagination
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { items } = useSelector((state) => state.reminders);
+  const { items, loading, error, success, totalPages, currentPage } = useSelector((state) => state.reminders);
 
   useEffect(() => {
-    dispatch(fetchReminders());
-  }, [dispatch]);
+    dispatch(fetchReminders(currentPage));
+  }, [dispatch, currentPage]);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/login');
+  const handlePageChange = (_, value) => {
+    dispatch(fetchReminders(value));
+  };
+
+  const handleCloseSnackbar = () => {
+    dispatch(clearStatus());
   };
 
   return (
     <Container>
-      <Box mt={4} display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="h4">Reminders</Typography>
-        <Button onClick={handleLogout} variant="outlined">Logout</Button>
-      </Box>
+      {loading && (
+        <Box display="flex" justifyContent="center" mt={4}>
+          <CircularProgress />
+        </Box>
+      )}
 
-      <Button
-        component={Link}
-        to="/add"
-        variant="contained"
-        color="primary"
-        sx={{ mt: 2 }}
-      >
-        Add Reminder
-      </Button>
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>
+      )}
+
+      {!loading && items.length === 0 && (
+        <Typography variant="body1" mt={4}>
+          No reminders found.
+        </Typography>
+      )}
 
       <List>
         {items.map((reminder) => (
@@ -63,6 +63,28 @@ export default function Dashboard() {
           </ListItem>
         ))}
       </List>
+
+      {totalPages > 1 && (
+        <Box display="flex" justifyContent="center" mt={3}>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+          />
+        </Box>
+      )}
+
+      <Snackbar
+        open={!!success}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          {success}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
