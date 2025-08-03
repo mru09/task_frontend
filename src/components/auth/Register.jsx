@@ -1,13 +1,12 @@
 // src/components/auth/Register.jsx
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   Box,
   Typography,
   TextField,
   Button,
-  MenuItem,
   Paper,
   Alert,
 } from '@mui/material';
@@ -66,16 +65,6 @@ export default function Register() {
             fullWidth
             onChange={(e) => setPassword(e.target.value)}
           />
-          <TextField
-            select
-            label="Register As"
-            value={role}
-            fullWidth
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <MenuItem value="user">User</MenuItem>
-            <MenuItem value="seller">Seller</MenuItem>
-          </TextField>
           <Button
             variant="contained"
             fullWidth

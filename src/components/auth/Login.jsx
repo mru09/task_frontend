@@ -5,7 +5,6 @@ import {
   Typography,
   TextField,
   Button,
-  MenuItem,
   Paper,
   Alert,
 } from '@mui/material';
@@ -32,7 +31,7 @@ export default function Login() {
       const name = res.data.name;
 
       dispatch(loginSuccess({ token, role, name }));
-      navigate(`/${role}/products`);
+      navigate(`/`);
     } catch (err) {
       setError('Invalid credentials');
     }
@@ -62,16 +61,6 @@ export default function Login() {
             fullWidth
             onChange={(e) => setPassword(e.target.value)}
           />
-          <TextField
-            select
-            label="Login As"
-            value={role}
-            fullWidth
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <MenuItem value="user">User</MenuItem>
-            <MenuItem value="seller">Seller</MenuItem>
-          </TextField>
           <Button variant="contained" fullWidth onClick={handleLogin}>
             Login
           </Button>
